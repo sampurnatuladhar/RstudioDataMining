@@ -1,0 +1,205 @@
+---
+title: "Dota2_Data_Mining"
+output:
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r chunk}
+df <-read.csv("dota2.csv")
+```
+
+
+
+
+## 1----------------------------------------------------------------------------
+
+## Summary of Duration (Quantative Variable)
+
+## Mean
+```{r}
+
+mean(df$duration,trim = 0, na.rm = FALSE)
+
+cat("\nStandard Deviation: ")
+sd(df$duration)
+
+cat("\nFive number summary: \n")
+summary(df$duration)
+```
+
+
+## Histogram of Duration 
+```{r}
+
+hist(df$duration,
+     main = "Dota2 game Length (Positive Skewed Distribution)",
+     xlab = "Game duration (sec)",
+     col = "pink",
+     probability = TRUE)
+#
+lines(density(df$duration),col = "blue")
+
+```
+
+## Quantile-Quantile Plots qqplots
+```{r}
+qqnorm(df$duration,
+       main = "QQPlot (Positive Skewed Distribution)",
+       ylab = "Duration (sec)")
+qqline(df$duration)
+```
+## Box Plot
+```{r}
+
+boxplot(df$duration,
+        main ="BoxPlot (Positive Skewed Distribution) ",
+        horizontal = TRUE,
+        xlab = "Duration (sec)")
+
+```
+## Outliers
+```{r}
+
+IQR(df$duration, na.rm = FALSE)
+out <- boxplot.stats(df$duration)$out
+out_ind <- which(df$duration %in% c(out))
+out_ind
+df[out_ind,]
+
+```
+## 2----------------------------------------------------------------------------
+
+## Graphical Display of multiple variables and their correlation
+
+```{r}
+plot(df$duration,df$first_blood_time,
+     main = "Multiple variable Graphical Display",
+     xlab = "Duration (sec)",
+     ylab ="First blood Time (sec)",
+     col = "blue",
+     pch = 19)
+
+
+print("Correlation: From the scatter plot we can assume that the First Blood time is densely populated around 2000s - 3000s(mid game) in duration. So, we can say that around mid game there is higher chance of getting first blood than during early and late game. ")
+
+```
+## 3----------------------------------------------------------------------------
+
+## Frequency Table
+```{r}
+
+
+cat("Frequency Table\n")
+cat("\n")
+table(df$radiant_win)
+
+```
+
+## Relative Frequency Table
+```{r}
+
+cat("Relative Frequency Table\n")
+cat("\n")
+table(df$radiant_win)/length(df$radiant_win)
+
+cat("\n")
+cat("47.2% of all values in the data set are FALSE.\n")
+cat("52.8% of all values in the data set are TRUE.\n")
+```
+
+## 4----------------------------------------------------------------------------
+
+## Two way table 
+```{r}
+
+#create data frame
+data_F <- data.frame(df$ability_name,df$radiant_win)
+
+#view data frame
+data_F
+
+#create two way table from data frame
+two_way_table <- table(df$ability_name,df$radiant_win)
+
+#display two way table
+two_way_table
+
+
+cat("\n")
+cat('\nRelationship between two Variables:\n')
+cat('\nThe game revolves around the Heroes, their ability, items and their play style or skills of the players and many other independent variables. But the relationship between ability_name and radiant_win is also strong in this case. There are many games in which any ability_name can wipe out opponent team which can cause the radiant_win to be TRUE in this case.
+')
+
+
+```
+
+## 5----------------------------------------------------------------------------
+
+## Side by side plot for one categorical and quantative varible.
+
+
+```{r}
+
+
+
+par(mfrow=c(1,2))
+plot(df$duration,
+     main="Scatterplot of Duration (sec)",
+     xlab = "",
+     ylab = "Duration")
+
+plot(df$item_id,
+     main="Scatterplot of Item Id",
+     xlab = "",
+     ylab = "Item ID")
+
+cat("")
+
+
+cat("Duration Summary: \n")
+summary(df$duration)
+
+cat("\nItem Id Summary: \n")
+summary(df$item_id)
+
+```
+## 6----------------------------------------------------------------------------
+
+#Visualization of Data
+```{r}
+
+barplot(df$item_id,
+        main = "Bar Chart",
+        xlab = "Item Id")
+
+scatter.smooth(df$item_id,
+               main = "Scatter Plot")
+
+
+require(ggplot2)
+data <- read.csv("dota2.csv", header = TRUE)
+data <- data.matrix(data[,-1])
+heatmap(t(data),
+        main = "Heat Map",
+        Rowv = NA,
+        Colv = NA,
+        col = heat.colors(200,alpha = 1,rev = FALSE),
+        scale = "row")
+
+
+
+
+cat("Summary statistics: \n")
+summary(df$item_id)           
+
+
+```
+
+
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+it
